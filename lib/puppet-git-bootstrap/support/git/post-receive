@@ -1,0 +1,51 @@
+#!/usr/bin/env ruby
+
+#
+# Courtesy of http://puppetlabs.com/blog/git-workflow-and-puppet-environments
+#
+
+require 'fileutils'
+
+ENVIRONMENT_BASEDIR = "/etc/puppet/environments"
+SOURCE_REPOSITORY   = File.expand_path(ENV['GIT_DIR'])
+
+ENV.delete('GIT_DIR')
+
+unless File.directory? ENVIRONMENT_BASEDIR
+  puts %Q{#{ENVIRONMENT_BASEDIR} does not exist, cannot create environment directories.}
+  exit 1
+end
+
+$stdin.each_line do |line|
+  oldrev, newrev, refname = line.split(" ")
+
+  branchname = refname.sub(%r{^refs/heads/(.*$)}) { $1 }
+
+  if branchname =~ /[\W-]/
+    puts %Q{Branch "#{branchname}" contains non-word characters, ignoring it.}
+    next
+  end
+
+  environment_path = "#{ENVIRONMENT_BASEDIR}/#{branchname}"
+
+  if newrev =~ /^0+$/
+    puts "Deleting existing environment #{branchname}"
+
+    if File.directory? environment_path
+      FileUtils.rm_rf environment_path, :secure => true
+    end
+  else
+    if File.directory? environment_path
+      puts "Updating existing environment #{branchname}"
+
+      Dir.chdir environment_path
+
+      %x{git fetch --all}
+      %x{git reset --hard "origin/#{branchname}"}
+    else
+      puts "Creating new environment #{branchname}"
+
+      %x{git clone #{SOURCE_REPOSITORY} #{environment_path} --branch #{branchname}}
+    end
+  end
+end

@@ -1,4 +1,4 @@
 #!/usr/bin/env ruby
 
-require 'puppet-git-bootstrap'
-PuppetGitBootstrap::CLI.run
+require 'puppet-git-bootstrap/cli'
+PuppetGitBootstrap::CLI.new.run
