@@ -1,5 +1,6 @@
 task :update_bootstrap_scripts do
-  base_uri = 'https://raw.githubusercontent.com/hashicorp/puppet-bootstrap/master'
+  base_uri  = 'https://raw.githubusercontent.com/hashicorp/puppet-bootstrap/master'
+  dest_path = 'lib/puppet-git-bootstrap/support/setup/puppet'
 
   [
     'arch.sh',
@@ -11,6 +12,6 @@ task :update_bootstrap_scripts do
     'solaris.sh',
     'ubuntu.sh'
   ].each { |script|
-    sh "wget #{base_uri}/#{script} -O lib/puppet-git-bootstrap/support/scripts/#{script}"
+    sh "wget #{base_uri}/#{script} -O #{dest_path}/#{script}"
   }
 end

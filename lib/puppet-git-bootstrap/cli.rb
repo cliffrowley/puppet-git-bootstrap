@@ -9,9 +9,11 @@ module PuppetGitBootstrap
       opts = Trollop::options do
         banner "Usage: #{$0} [options] <user@host>"
 
-        opt :os,       'The remote operating system',          type: :string
-        opt :port,     'The ssh port to connect on',           type: :integer
-        opt :identity, 'The private key to authenticate with', type: :string
+        opt :os,       'The remote operating system',          type: :string,  short: :o
+        opt :port,     'The ssh port to connect on',           type: :integer, short: :p
+        opt :identity, 'The private key to authenticate with', type: :string,  short: :i
+        opt :nopuppet, 'Do not bootstrap puppet',              type: :flag,    short: :u
+        opt :nogit,    'Do not bootstrap git',                 type: :flag,    short: :g
         opt :list,     'List supported operating systems'
       end
 

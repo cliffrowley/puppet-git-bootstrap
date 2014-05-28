@@ -21,9 +21,7 @@ module PuppetGitBootstrap
         raise ArgumentError.new("OS '#{opts[:os]}' not supported")
       end
 
-      local_path = script_path
-      ssh_opts   = {}
-
+      ssh_opts = {}
       ssh_opts[:port] = opts[:port] if opts[:port]
 
       if opts[:identity]
@@ -31,18 +29,33 @@ module PuppetGitBootstrap
         ssh_opts[:keys_only] = true
       end
 
+      local_script_path  = script_path
+      local_support_path = support_path
+      local_opts         = opts
+
       on host do |host|
         host.ssh_options = ssh_opts
-        upload! local_path, '/tmp/puppet-bootstrap.sh'
-        execute 'sudo sh /tmp/puppet-bootstrap.sh'
-        # TODO set up git and its hook
+
+        unless local_opts[:nopuppet]
+          upload! local_script_path, '/tmp/puppet-bootstrap.sh'
+          execute 'sudo sh /tmp/puppet-bootstrap.sh'
+        end
+
+        unless local_opts[:nogit]
+          upload! "#{local_support_path}/setup/git/git.pp", '/tmp/git.pp'
+          execute 'sudo puppet apply /tmp/git.pp'
+        end
       end
     end
 
     private
 
+    def support_path
+      File.expand_path(File.dirname(__FILE__) + '/support')
+    end
+
     def scripts_dir
-      File.expand_path(File.dirname(__FILE__) + '/support/scripts')
+      "#{support_path}/setup/puppet"
     end
 
     def script_path
