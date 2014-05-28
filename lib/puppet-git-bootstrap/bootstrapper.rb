@@ -39,11 +39,13 @@ module PuppetGitBootstrap
         unless local_opts[:nopuppet]
           upload! local_script_path, '/tmp/puppet-bootstrap.sh'
           execute 'sudo sh /tmp/puppet-bootstrap.sh'
+          execute 'rm -rf /tmp/puppet-bootstrap.sh'
         end
 
         unless local_opts[:nogit]
           upload! "#{local_support_path}/setup/git/git.pp", '/tmp/git.pp'
           execute 'sudo puppet apply /tmp/git.pp'
+          execute 'rm -rf /tmp/git.pp'
         end
       end
     end
