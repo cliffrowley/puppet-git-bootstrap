@@ -1,3 +1,7 @@
+# IMPORTANT NOTE
+
+This project is now retired and unmaintained. I consider this code public domain, so please feel free to do whatever you like with it.
+
 # Puppet Git Bootstrap
 
 Bootstraps a node with an opinionated Git based Puppet workflow.
